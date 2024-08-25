@@ -1,9 +1,9 @@
-TRAIN_DIR=lecard-train
+TRAIN_DIR=../lecard-train
 OUTDIR=model-lecard
 
-python -m torch.distributed.launch --nproc_per_node=4 -m dense.driver.train \
+python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --output_dir $OUTDIR \
-  --model_name_or_path bert-base-uncased \
+  --model_name_or_path /root/autodl-tmp/AI-ModelScope/bert-base-uncased \
   --do_train \
   --save_steps 20000 \
   --train_dir $TRAIN_DIR \
