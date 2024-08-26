@@ -39,7 +39,7 @@ with open(args.input, 'r', encoding='utf-8') as f:
 
 if not os.path.exists(args.output):
     os.makedirs(args.output)
-with open(os.path.join(args.output, 'train_data.json'), 'w') as f:
+with open(os.path.join(args.output, 'train_data_common.json'), 'w') as f:
     for idx, item in enumerate(tqdm(data)):
         group = {}
         query = tokenizer.encode(item['fact'], add_special_tokens=False, max_length=256, truncation=True)

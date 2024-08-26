@@ -1,9 +1,9 @@
-TRAIN_DIR=../lecard-train
-OUTDIR=model-lecard
+TRAIN_DIR=../lecard-train-15
+OUTDIR=model-lecard-bert-base-chinese
 
 python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --output_dir $OUTDIR \
-  --model_name_or_path /root/autodl-tmp/AI-ModelScope/bert-base-uncased \
+  --model_name_or_path /root/autodl-tmp/PollyZhao/bert-base-chinese/ \
   --do_train \
   --save_steps 20000 \
   --train_dir $TRAIN_DIR \
@@ -15,4 +15,3 @@ python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --p_max_len 512 \
   --num_train_epochs 40 \
   --negatives_x_device \
-  --overwrite_output_dir

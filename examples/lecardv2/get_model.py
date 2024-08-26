@@ -5,4 +5,4 @@
 
 #模型下载
 from modelscope import snapshot_download
-model_dir = snapshot_download('AI-ModelScope/bert-base-uncased',cache_dir='/root/autodl-tmp')
+model_dir = snapshot_download('PollyZhao/bert-base-chinese',cache_dir='/root/autodl-tmp')

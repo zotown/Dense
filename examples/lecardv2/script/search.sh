@@ -8,4 +8,4 @@ python -m dense.faiss_retriever \
 --depth $DEPTH \
 --batch_size -1 \
 --save_text \
---save_ranking_to $RUN
+--save_ranking_to $RUNs
