@@ -8,10 +8,11 @@ python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --save_steps 20000 \
   --train_dir $TRAIN_DIR \
   --fp16 \
-  --per_device_train_batch_size 2 \
+  --per_device_train_batch_size 4 \
   --train_n_passages 2 \
   --learning_rate 1e-5 \
-  --q_max_len 32 \
-  --p_max_len 156 \
+  --q_max_len 512 \
+  --p_max_len 512 \
   --num_train_epochs 40 \
-  --negatives_x_device
+  --negatives_x_device \
+  --overwrite_output_dir
