@@ -5,7 +5,24 @@ from argparse import ArgumentParser
 from transformers import AutoTokenizer
 from tqdm import tqdm
 import random
-def load_input(data):
+
+def deal_input(record, args, fact=None,item=None):
+    if args.type == "+com":
+        return load_input(record) + fact
+    elif args.type == "+crime":
+        return load_input(record, add_crime=True)
+    elif args.type == "+typecrime":
+        if "charge" not in item:
+            return load_input(record, add_crime=True)
+        else:#对于candidate 加入标准罪名
+            data=load_input(record)
+            crime="罪名:"+" ".join(item['charge'])
+            return data+crime
+
+
+
+
+def load_input(data,add_crime=False):
     def dict_to_string(d,i):
         return f"\t罪名{str(i)}: "+', '.join(f'{key}: {value}' for key, value in d.items())
     try:
@@ -13,31 +30,40 @@ def load_input(data):
             data = data[8:-3]
         data = json.loads(data)
         crime = ""
+        crime2="\t罪名:"
         i=1
         if type(data) == list:
             for item in data:
                 if '犯罪的四要件' in item:
                     crime+=dict_to_string(item["犯罪的四要件"],i)
+                    if add_crime == True:
+                        crime2 += f"{item['罪名']}\t"
                     i+=1
                 else:
                     for key in item:
                         crime+=dict_to_string((item[key]["犯罪的四要件"]),i)
+                        if add_crime == True:
+                            crime2 += f"{item[key]['罪名']}\t"
                         i += 1
         else:
             for key in data:
                 crime+=dict_to_string(data[key]["犯罪的四要件"],i)
+                if add_crime == True:
+                    crime2 += f"{data[key]['罪名']}\t"
                 i += 1
-        return crime
+        if add_crime == True:
+            return crime+crime2
+        else:
+            return crime
     except Exception:
         print(Exception)
         return []
 
-def build_pos_neg(candidate,can4ele):
+def build_pos_neg(candidate,can4ele,args):
     positives = []
     negatives = []
     for item in candidate:
-        positives.append(load_input(item.get("can_4element"))+item['fact'])
-
+        positives.append(deal_input(item["can_4element"],args,item["fact"],item))
     for element in can4ele:
         if element not in positives:
             negatives.append(element)
@@ -47,13 +73,14 @@ def build_pos_neg(candidate,can4ele):
 
 parser = ArgumentParser()
 parser.add_argument('--input', type=str, default='sample15_result_gpt-4o-2024-08-06-train15.json')
-parser.add_argument('--output', type=str, default='lecard-train-bert-base-chinese+com')
+parser.add_argument('--output', type=str, default='lecard-train-bert-base-chinese')
 parser.add_argument('--tokenizer', type=str, required=False, default='/root/autodl-tmp/PollyZhao/bert-base-chinese/')
 parser.add_argument('--minimum-negatives', type=int, required=False, default=8)
+parser.add_argument('--type', type=str, required=False, default='+typecrime')
 args = parser.parse_args()
 
 tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
-
+args.output=args.output+args.type
 
 data = []
 can4ele = []
@@ -62,7 +89,7 @@ with open(args.input, 'r', encoding='utf-8') as f:
         record=json.loads(line)
         data.append(record)
         for candidate in record.get("candidate", []):
-            candidate_4element = load_input(candidate.get("can_4element"))+candidate.get("fact", "")
+            candidate_4element = deal_input(candidate["can_4element"],args,candidate["fact"],candidate)
             can4ele.append(candidate_4element)
 
 if not os.path.exists(args.output):
@@ -70,9 +97,10 @@ if not os.path.exists(args.output):
 with open(os.path.join(args.output, 'train_data.json'), 'w') as f:
     for idx, item in enumerate(tqdm(data)):
         group = {}
-        query = tokenizer.encode(load_input(record.get("query_4element"))+item['fact'], add_special_tokens=False, max_length=512, truncation=True)
-        group['query'] = query
-        positives,negatives = build_pos_neg(item['candidate'],can4ele)
+        query = deal_input(item["query_4element"],args,item["fact"],item)
+        group['query'] = tokenizer.encode(query, add_special_tokens=False,
+                                 max_length=512, truncation=True)
+        positives,negatives = build_pos_neg(item['candidate'],can4ele,args)
         group['positives'] = []
         group['negatives'] = []
         for pos in positives:

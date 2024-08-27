@@ -70,7 +70,7 @@ if not os.path.exists(args.output):
 with open(os.path.join(args.output, 'train_data.json'), 'w') as f:
     for idx, item in enumerate(tqdm(data)):
         group = {}
-        query = tokenizer.encode(load_input(record.get("query_4element")), add_special_tokens=False, max_length=512, truncation=True)
+        query = tokenizer.encode(load_input(item.get("query_4element")), add_special_tokens=False, max_length=512, truncation=True)
         group['query'] = query
         positives,negatives = build_pos_neg(item['candidate'],can4ele)
         group['positives'] = []

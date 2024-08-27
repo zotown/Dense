@@ -1,5 +1,5 @@
-TRAIN_DIR=../lecard-train-bert-base-chinese+com
-OUTDIR=model-lecard-bert-base-chinese+com
+TRAIN_DIR=../lecard-train-bert-base-chinese+typecrime
+OUTDIR=model-lecard-bert-base-chinese+typecrime
 
 python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --output_dir $OUTDIR \
