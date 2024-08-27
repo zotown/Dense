@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 
-from transformers import AutoConfig, AutoTokenizer
+from transformers import AutoConfig, AutoTokenizer,BertTokenizer
 from transformers import (
     HfArgumentParser,
     set_seed,
@@ -63,11 +63,13 @@ def main():
         num_labels=num_labels,
         cache_dir=model_args.cache_dir,
     )
-    tokenizer = AutoTokenizer.from_pretrained(
+    tokenizer = BertTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         use_fast=False,
     )
+
+
     model = DenseModel.build(
         model_args,
         data_args,

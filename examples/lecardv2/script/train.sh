@@ -1,14 +1,16 @@
-TRAIN_DIR=../lecard-train-bert-base-chinese+typecrime
-OUTDIR=model-lecard-bert-base-chinese+typecrime
+TYPE=+crime
+MODEL=Lawformer
+TRAIN_DIR=../lecard-train-$MODEL$TYPE
+OUTDIR=model-lecard-$MODEL$TYPE
 
 python -m torch.distributed.launch --nproc_per_node=1 -m dense.driver.train \
   --output_dir $OUTDIR \
-  --model_name_or_path /root/autodl-tmp/PollyZhao/bert-base-chinese/ \
+  --model_name_or_path /root/autodl-tmp/$MODEL \
   --do_train \
   --save_steps 20000 \
   --train_dir $TRAIN_DIR \
   --fp16 \
-  --per_device_train_batch_size 4 \
+  --per_device_train_batch_size 2 \
   --train_n_passages 2 \
   --learning_rate 1e-5 \
   --q_max_len 512 \

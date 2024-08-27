@@ -1,7 +1,8 @@
-TYPE="+typecrime"
-ENCODE_DIR=embeddings-lecard-bert-base-chinese$TYPE
+TYPE=+crime
+MODEL=Lawformer
+ENCODE_DIR=embeddings-lecard-$MODEL$TYPE
 OUTDIR=temp
-MODEL_DIR=model-lecard-bert-base-chinese$TYPE
+MODEL_DIR=model-lecard-$MODEL$TYPE
 CORPUS_DIR=../corpus
 mkdir $ENCODE_DIR
 
@@ -13,7 +14,7 @@ python -m dense.driver.encode \
   --encode_in_path $CORPUS_DIR/corpus.json \
   --encoded_save_path $ENCODE_DIR/corpus.pt
 
-ENCODE_QRY_DIR=embeddings-lecard-queries-bert-base-chinese$TYPE
+ENCODE_QRY_DIR=embeddings-lecard-queries-$MODEL$TYPE
 OUTDIR=temp
 QUERY=../corpus/query.json
 
@@ -28,7 +29,7 @@ python -m dense.driver.encode \
 
 
 DEPTH=100
-RUN=run.lecard.test-bert-base-chinese$TYPE.txt
+RUN=run.lecard.test-$MODEL$TYPE.txt
 
 python -m dense.faiss_retriever \
 --query_reps $ENCODE_QRY_DIR/query.pt \
