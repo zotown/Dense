@@ -1,6 +1,6 @@
-ENCODE_DIR=embeddings-lecard
+ENCODE_DIR=embeddings-lecard-bert-base-chinese+com
 OUTDIR=temp
-MODEL_DIR=model-lecard-bert-base-chinese
+MODEL_DIR=model-lecard-bert-base-chinese+com
 CORPUS_DIR=../corpus
 mkdir $ENCODE_DIR
 

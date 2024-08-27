@@ -1,6 +1,6 @@
-ENCODE_QRY_DIR=embeddings-lecard-queries
+ENCODE_QRY_DIR=embeddings-lecard-queries-bert-base-chinese+com
 OUTDIR=temp
-MODEL_DIR=model-lecard-bert-base-chinese
+MODEL_DIR=model-lecard-bert-base-chinese+com
 QUERY=../corpus/query.json
 
 mkdir $ENCODE_QRY_DIR

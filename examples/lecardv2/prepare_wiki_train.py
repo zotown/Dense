@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 from transformers import AutoTokenizer
 from tqdm import tqdm
+import random
 def load_input(data):
     def dict_to_string(d,i):
         return f"\t罪名{str(i)}: "+', '.join(f'{key}: {value}' for key, value in d.items())
@@ -40,13 +41,14 @@ def build_pos_neg(candidate,can4ele):
     for element in can4ele:
         if element not in positives:
             negatives.append(element)
+    negatives = random.sample(negatives, 100 - len(positives))  # todo:改为相似罪名
     return positives,negatives
 
 
 parser = ArgumentParser()
-parser.add_argument('--input', type=str, required=True)
-parser.add_argument('--output', type=str, required=True)
-parser.add_argument('--tokenizer', type=str, required=False, default='bert-base-uncased')
+parser.add_argument('--input', type=str, default='sample15_result_gpt-4o-2024-08-06-train15.json')
+parser.add_argument('--output', type=str, default='lecard-train-bert-base-chinese')
+parser.add_argument('--tokenizer', type=str, required=False, default='/root/autodl-tmp/PollyZhao/bert-base-chinese/')
 parser.add_argument('--minimum-negatives', type=int, required=False, default=8)
 args = parser.parse_args()
 
@@ -68,7 +70,7 @@ if not os.path.exists(args.output):
 with open(os.path.join(args.output, 'train_data.json'), 'w') as f:
     for idx, item in enumerate(tqdm(data)):
         group = {}
-        query = tokenizer.encode(load_input(record.get("query_4element")), add_special_tokens=False, max_length=256, truncation=True)
+        query = tokenizer.encode(load_input(record.get("query_4element")), add_special_tokens=False, max_length=512, truncation=True)
         group['query'] = query
         positives,negatives = build_pos_neg(item['candidate'],can4ele)
         group['positives'] = []
